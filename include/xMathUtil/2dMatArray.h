@@ -124,6 +124,7 @@ public:
 	cv::Mat GetMergedImage() const { cv::Rect rc(cv::Point(0, 0), size()); return GetROI(rc); }
 	cv::Mat GetROI(cv::Rect& rc) const { return GetResizedImage(rc, 0.0, -1, -1); }
 	cv::Mat GetResizedImage(cv::Rect& rc, double dScale, int eScaleDownMethod = -1, int eScaleUpMethod = -1) const;
+	cv::Mat GetResizedImage(cv::Rect& rc, cv::Size size, int eScaleDownMethod = -1, int eScaleUpMethod = -1) const;
 
 protected:
 	CEvent m_evtThumbnail;

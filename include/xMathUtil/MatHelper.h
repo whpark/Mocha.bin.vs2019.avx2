@@ -137,6 +137,7 @@ void putTextC(cv::InputOutputArray img, TSTR& psz, cv::Point org,
 BOOL AFX_EXT_CLASS_XMU UseGPU(BOOL bUse);
 BOOL AFX_EXT_CLASS_XMU IsGPUEnabled();
 BOOL AFX_EXT_CLASS_XMU ConvertColor(const cv::Mat& imgSrc, cv::Mat& imgDest, int eCode);
+BOOL AFX_EXT_CLASS_XMU ResizeImage(const cv::Mat& imgSrc, cv::Mat& imgDest, cv::Size sizeTarget, int eInterpolation = cv::INTER_LINEAR/*, int eScaleDownMethod = cv::INTER_AREA*/);
 BOOL AFX_EXT_CLASS_XMU ResizeImage(const cv::Mat& imgSrc, cv::Mat& imgDest, double dScale, int eInterpolation = cv::INTER_LINEAR/*, int eScaleDownMethod = cv::INTER_AREA*/);
 BOOL AFX_EXT_CLASS_XMU MatchTemplate(const cv::Mat& img, const cv::Mat& imgTempl, cv::Mat& matResult, int method);
 BOOL AFX_EXT_CLASS_XMU MatchTemplate(const cv::Mat& img, const cv::Mat& imgTempl, int method, CPoint2d& ptBest, double& dMinMax, double& dRate, double dScale = 0.0, int eInterpolation = cv::INTER_LINEAR);
