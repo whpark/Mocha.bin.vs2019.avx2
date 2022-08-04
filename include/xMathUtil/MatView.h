@@ -166,32 +166,100 @@ protected:
 		CPoint2i ptCurrent;
 	} m_mouse;
 
-	struct T_CROSS_MARK {
-		CString strName;
+	template < typename T_ATTRIBUTE >
+	class TDisplayAttributeContainer : public std::map<CString, T_ATTRIBUTE> {
+		using this_t = TDisplayAttributeContainer;
+		using base_t = std::map<CString, T_ATTRIBUTE>;
+
+	public:
+		HWND& m_hWnd;
+		base_t& base() { return (base_t&)*this; }
+		base_t const& base() const { return (base_t const&)*this; }
+
+	public:
+		size_t ShowAttribute(LPCTSTR pszName, bool bShow = true) {
+			size_t n{};
+			if (pszName) {
+				base()[pszName].bShow = bShow;
+				n = 1;
+			}
+			else {
+				n = base().size();
+				for (auto& [key, v] : base()) {
+					v.bShow = bShow;
+				}
+			}
+			if (m_hWnd)
+				::InvalidateRect(m_hWnd, nullptr, false);
+			return n;
+		}
+		bool AddAttribute(LPCTSTR pszName, T_ATTRIBUTE&& value) {
+			if (!pszName)
+				return false;
+			base()[pszName] = std::move(value);
+			if (m_hWnd)
+				::InvalidateRect(m_hWnd, nullptr, false);
+			return true;
+		}
+		T_ATTRIBUTE& Get(LPCTSTR pszName) {
+			return base()[pszName];
+		}
+		size_t DeleteAttribute(LPCTSTR pszName = nullptr) {
+			size_t n{};
+			if (pszName) {
+				n = base().erase(pszName);
+			}
+			else {
+				n = base().size();
+				base().clear();
+			}
+			if (m_hWnd)
+				::InvalidateRect(m_hWnd, nullptr, false);
+			return n;
+		}
+	};
+
+	struct S_CROSS_MARK {
+		bool bShow = false;
 		CString strLabel;
-		BOOL bShow = false;
 		CPoint2d pt;
 		CSize2i size;
 		int nPenStyle = PS_SOLID;
 		int iThick = 1;
 		COLORREF cr = RGB(255, 255, 255);
-		int operator == (LPCTSTR pszName) const { return strName == pszName; }
+		bool operator == (S_CROSS_MARK const&) const = default;
+		bool operator != (S_CROSS_MARK const&) const = default;
 	};
-	struct T_RECT_REGION {
-		CString strName;
+	struct S_RECT_REGION {
+		bool bShow = false;
 		CString strLabel;
-		BOOL bShow = false;
 		CRect2d rect;
 		int nPenStyle = PS_SOLID;
 		int iThick = 1;
 		COLORREF cr = RGB(255, 255, 255);
-		int operator == (LPCTSTR pszName) const { return strName == pszName; }
+		bool operator == (S_RECT_REGION const&) const = default;
+		bool operator != (S_RECT_REGION const&) const = default;
 	};
+	struct S_ELLIPSE {
+		bool bShow = false;
+		CString strLabel;
+		cv::RotatedRect rect;
+		int nPenStyle = PS_SOLID;
+		int iThick = 1;
+		COLORREF cr = RGB(255, 255, 255);
+		bool operator == (S_ELLIPSE const&) const = default;
+		bool operator != (S_ELLIPSE const&) const = default;
+	};
+public:
 	struct {
-		std::deque<T_CROSS_MARK> crosses;
-		std::deque<T_RECT_REGION> rects;
-		T_RECT_REGION rectCurrent;
+		HWND& m_hWnd;
+		TDisplayAttributeContainer<S_CROSS_MARK> crosses{.m_hWnd = m_hWnd};
+		TDisplayAttributeContainer<S_RECT_REGION> rects{.m_hWnd = m_hWnd};
+		TDisplayAttributeContainer<S_ELLIPSE> ellipses{.m_hWnd = m_hWnd};
+		S_RECT_REGION rectCurrent;
 	} m_display;
+
+protected:
 	struct {
 		CPoint2d pt0, delta;
 		std::chrono::steady_clock::time_point t0, t1;

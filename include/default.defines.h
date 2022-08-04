@@ -282,12 +282,11 @@ typedef size_t count_t;
 #ifndef _M_PI
 #	define _M_PI 3.1415926535897932384626433832795028
 #endif
-#ifndef rad2deg	// radian to degree
-#	define rad2deg(x) ((x) * 180. / _M_PI )
-#endif
-#ifndef deg2rad	// degree to radian
-#	define deg2rad(x) ((x) * _M_PI / 180. )
-#endif
+template < std::floating_point T >
+constexpr T rad2deg(T rad) { return (rad * 180. / _M_PI ); }
+template < std::floating_point T >
+constexpr T deg2rad(T deg) { return (deg * _M_PI / 180. ); }
+
 
 #ifndef NOT
 #	define NOT !
